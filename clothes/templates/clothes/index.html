@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+
+{% extends 'clothes/base.html' %}
+
+{% block content %}
+
+
+
+<head>
+  <title>template test</title>
+</head>
+
+<body>
+
+<div class ="body1">
+  <p>今日の気温からあなたに最適な服装を提案します。</p>  
+</div>
+
+<div class ="button">
+  <form method="POST">
+    {% csrf_token %}
+    <button type="submit">スタート</button>
+  </form>
+</div>
+
+<div class ="body2">
+  <p>現在地： {{region}} </p>  
+  <p>最高気温： {{max}}</p>  
+  <p>最低気温： {{min}}</p>  
+  <p>あなたの今日の服は： {{coodinate}} </p>  
+</div>
+
+</body>
+
+{% endblock %}
+
+</html>

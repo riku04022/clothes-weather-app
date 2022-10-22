@@ -1,0 +1,20 @@
+.body1 {
+    position: relative;
+    top: 230px;
+    bottom: 0;
+    text-align: center;
+}
+
+.button {
+    position: relative;
+    top: 300px;
+    bottom: 0;
+    text-align: center;
+}
+
+.body2 {
+    position: relative;
+    text-align: center;
+    top: 350px;
+    bottom: 0;
+}
