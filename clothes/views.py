@@ -6,7 +6,6 @@ from django.urls import reverse
 from django.views import generic
 import requests
 
-from .models import Choice, Question
 
 def index(request):
     # エリアコード
@@ -137,7 +136,7 @@ def index(request):
         elif 18 <= max_temp < 23 and 16 > min_temp:
             coordinate = ('厚めのカーディガンやスウェットを着ると過ごしやすいでしょう')
         elif 10 <= max_temp < 18 and 8 <= min_temp < 18:
-            coordinate = ('セーターや薄めのコートを着ていくといいでしょ')
+            coordinate = ('セーターや薄めのコートを着ていくといいでしょう')
         elif 10 <= max_temp < 18 and 8 > min_temp:
             coordinate = 'トレンチコートなどの長めのコートを持参するといいいでしょう'
         elif max_temp < 10 and 2 <= min_temp < 10:
