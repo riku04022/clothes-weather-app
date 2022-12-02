@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+
+{% extends 'clothes/base.html' %}
+{% block content %}
+
+<body>
+  <header> 
+    <a class="posting" href="">投稿</a>
+    <a class="mypage" href="">マイページ</a>
+    <a class="loginout" href="">ログアウト</a>
+  </header>
+
+  <div class ="body1">
+  <p>今日の気温からあなたに最適な服装を提案します。</p>  
+  <p>都市を選択してください。</p> 
+  </div>
+
+  <div class ="button">
+    <form method="post">
+        {% csrf_token %}
+        {{ region }}
+        <input type = "submit" value="スタート">
+    </form>
+  </div>
+
+
+  <div class ="body2">
+    <p>最高気温： {{max}}</p>  
+    <p>最低気温： {{min}}</p>  
+    <p>あなたの今日の服は： {{coodinate}} </p>  
+  </div>
+
+</body>
+
+{% endblock %}
+
+</html>

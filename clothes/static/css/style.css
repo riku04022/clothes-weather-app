@@ -1,20 +1,133 @@
 .body1 {
     position: relative;
-    top: 230px;
+    top: 150px;
     bottom: 0;
     text-align: center;
 }
 
 .button {
     position: relative;
-    top: 300px;
+    top: 230px;
     bottom: 0;
     text-align: center;
+}
+
+nav {
+    z-index: 1;
+}
+
+header {
+    position: absolute;
+    text-align: center;
+    top: 20px;
+    right: 30px;
+    z-index: 2;
+}
+
+.login {
+    color: white;
+}
+
+.back {
+    color: white;
+}
+
+.logout {
+    color: white;
+}
+
+.posting {
+    right: 90px;
+    color: white;
+}
+
+.mypage {
+    right: 0;
+    position: fixed;
+    margin: 0;
+    padding-left: 25px;
+    padding-right: 25px;
+    line-height: 65px;
+    color: white;
 }
 
 .body2 {
     position: relative;
     text-align: center;
-    top: 350px;
+    top: 260px;
     bottom: 0;
+}
+
+.body3 {
+    position: relative;
+    text-align: left;
+    top: 270px;
+    bottom: 0;
+}
+
+div.reg {
+    padding-top: 2%;
+    padding-bottom: 2%;
+    margin-left: auto;
+    margin-right: auto;
+    position: relative;
+    text-align: center;
+    top: 300px;
+    background-color: #EEEEEE;
+}
+
+.message {
+    position: relative;
+    text-align: center;
+    top: 350px;
+}
+
+table.reg_form {
+    width: 100%;
+    border-spacing: 10px 30px;
+    padding-bottom: 20px;
+}
+
+.btn {
+    color: #fff;
+    background-color: #000033;
+    font-size: 1.0em;
+}
+
+.register {
+    position: relative;
+    text-align: center;
+    top: 500px;
+    bottom: 0;
+}
+
+.upload {
+    position: relative;
+    text-align: center;
+    top: 200px;
+    bottom: 0;
+}
+
+.btn:hover {
+    color: #fff;
+    background: #000099;
+}
+
+h1 {
+    position: relative;
+    text-align: center;
+    top: 200px;
+}
+
+table.reg_form {
+    width: 100%;
+    border-spacing: 10px 30px;
+    padding-left: 20px;
+}
+
+.image1 {
+    position: relative;
+    justify-content: center;
+    top: 310px;
+    display: flex;
 }

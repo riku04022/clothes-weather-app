@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+
+{% extends 'clothes/base.html' %}
+{% block content %}
+  
+<header>
+  <a href="{% url 'clothes:post_image' %}" class="posting">投稿</a>
+  <a href="{% url 'clothes:Logout' %}" class="logout">ログアウト</a>
+</header>
+
+<div class ="body1">
+<p>今日の気温からあなたに最適な服装を提案します。</p>  
+<p>都市を選択してください。</p> 
+</div>
+<div class ="button">
+  <form method="post">
+      {% csrf_token %}
+      {{ region }}
+      <input type = "submit" value="スタート">
+  </form>
+</div>
+<div class ="body2">
+  <p>最高気温： {{max}}</p>  
+  <p>最低気温： {{min}}</p>  
+  <p>あなたの今日の服は： {{coordinate}} </p>  
+</div>
+
+<div class = "body3">
+  {% if url_1 is not None %}
+    <p>他の人はこんな服を着ています↓↓↓↓</p>
+  {% endif %}
+</div>
+
+<div class = "image1">
+  {% if url_1 is not None %}
+    <img src="{{url_1}}" width="200" height="200" hspace="60"><img src="{{url_2}}" width="200" height="200" hspace="60">
+  {% endif %}
+</div>
+
+
+{% endblock %}
+
+</html>

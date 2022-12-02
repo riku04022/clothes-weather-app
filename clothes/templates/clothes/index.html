@@ -2,16 +2,12 @@
 <html>
 
 {% extends 'clothes/base.html' %}
-
 {% block content %}
 
-
-
-<head>
-  <title>服装決定アプリ</title>
-</head>
-
 <body>
+  <header> 
+    <a href="{% url 'clothes:Login' %}" class="login">ログイン</a>
+  </header>
 
   <div class ="body1">
   <p>今日の気温からあなたに最適な服装を提案します。</p>  
@@ -25,7 +21,6 @@
         <input type = "submit" value="スタート">
     </form>
   </div>
-
 
   <div class ="body2">
     <p>最高気温： {{max}}</p>  
