@@ -1,17 +1,15 @@
-<!DOCTYPE html>
-<html lang="ja">
-
-
-<head>
-<meta charset="UTF-8">
-<title>ログアウト</title>
-</head>
-
-
-<body>
-    <h1>ログアウトしました。</h1>
-    <p><a href="{% url 'clothes:Login' %}">ログイン画面へ戻る</a></p>
-</body>
-
-
-</html>
+<!--  clothes/templates/clothes/logout.html -->
+{% extends 'clothes/base.html' %}
+{% block content %}
+<header>
+    <nav class="navbar navbar-expand-md navbar-light bg-light fluid-top">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="{% url 'clothes:home' %}">服装決定アプリ</a>
+      </div>
+    </nav>
+</header>
+<div class="logouted">
+    <h1>ログアウトしました</h1>
+    <a href="{% url 'clothes:Login' %}">ログイン画面に戻る</a>
+</div>
+{% endblock %}

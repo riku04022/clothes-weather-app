@@ -1,77 +1,74 @@
-from django.http import HttpResponseRedirect
-from django.http import HttpResponse
-from django.template import loader
+import requests, random, json
+from django.http import HttpResponseRedirect, HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, render
-from django.urls import reverse
 from django.views import generic
-from .forms import PrefectureForm
-import requests
-from .forms import UploadForm
-from .models import UploadImage
-import random
-
-from django.views.generic import TemplateView #テンプレートタグ
-from .forms import AccountForm, AddAccountForm #ユーザーアカウントフォーム
-
-# ログイン・ログアウト処理に利用
+from django.views.generic import ListView, TemplateView, DetailView
+from .forms import PrefectureForm, UploadForm, AccountForm, AddAccountForm
+from .models import UploadImage, LikeForPost
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
+from django.utils.decorators import method_decorator
 
-def index(request):
-
-    prefecture = ""
-    max_celsius = ""
-    min_celsius = ""
-    coordinate = ""
-    
-    
-    if (request.method == 'POST'):
-        if('choice' in request.POST):
-            location_num = request.POST['choice']
-
-            geo_request_url = f"https://weather.tsukumijima.net/api/forecast/city/{location_num}"
-            data = requests.get(geo_request_url).json()
-            max_temp = int(data['forecasts'][1]['temperature']['max']['celsius'])
-            min_temp = int(data['forecasts'][1]['temperature']['min']['celsius'])
-            max_celsius = str(max_temp) + "℃"
-            min_celsius = str(min_temp) + "℃"
-
-            if max_temp >= 23 and min_temp > 20:
-                coordinate = '半袖など真夏の格好でいいでしょう'
-            elif max_temp >= 23 and min_temp <= 20:
-                coordinate = '半袖とプラスで何かはおうものがあるといいでしょう'
-            elif 18 <= max_temp < 23 and 16 <= min_temp < 23:
-                coordinate = ('薄めカーディガンや長袖シャツを着ていくといいでしょう')
-            elif 18 <= max_temp < 23 and 16 > min_temp:
-                coordinate = ('厚めのカーディガンやスウェットを着ると過ごしやすいでしょう')
-            elif 10 <= max_temp < 18 and 8 <= min_temp < 18:
-                coordinate = ('セーターや春物のコートを着ていくといいでしょう')
-            elif 10 <= max_temp < 18 and 8 > min_temp:
-                coordinate = 'トレンチコートなど着ていくといいでしょう'
-            elif max_temp < 10 and 2 <= min_temp < 10:
-                coordinate = '冬物コートやボアブルゾンを着ていくようにしましょう'
-            elif max_temp < 10 and 2 > min_temp:
-                coordinate = 'ダウンコートや手袋やマフラーが必須ですね'
-
-    params = {
-        'region': prefecture,
-        'max': max_celsius,
-        'min': min_celsius,
-        'coodinate': coordinate,
-        'form': PrefectureForm
+# 投稿へのいいね
+def like_for_post(request):
+    post_pk = request.POST.get('post_pk')
+    context = {
+        'user': f'{request.user.last_name} {request.user.first_name}',
     }
+    post = get_object_or_404(UploadImage, pk=post_pk)
+    like = LikeForPost.objects.all().filter(target=post, user=request.user)
+
+    # 既にいいねされてたらいいね消す、されてなかったらいいねする
+    if like.exists():
+        like.delete()
+        post.sum_like -= 1
+        post.save()
+        context['method'] = 'delete'
+    else:
+        like.create(target=post, user=request.user)
+        post.sum_like += 1
+        post.save()
+        context['method'] = 'create'
     
-    params['region'] = PrefectureForm(request.POST)
+    context['like_for_post_count'] = post.likeforpost_set.count()
+       
+    return JsonResponse(context)
+
+
+# ホーム画面(ログインなし)
+class IndexView(generic.TemplateView):
+    model = UploadImage
     
-    return render(request, 'clothes/index.html' ,params)
+    def __init__(self):
+        self.params = {
+            "PrefectureList": PrefectureForm,
+            "max_temp": 0,
+            "min_temp": 0,
+            "climate": None,
+            "coordinate": None,
+            "images": None,
+        }
 
-def go_Login(request):
-    return render(request, 'clothes/login.html')
+    # Get処理
+    def get(self, request):
+        # 初期値は東京
+        INITIAL_LOCATION = 'lat=35.4122&lon=139.4130'
+        self.params = index(self, request, INITIAL_LOCATION)
+        
+        return render(request, "clothes/index.html", context=self.params)
 
-
+    # Post処理
+    def post(self, request):
+        # プルダウンリストから位置取得
+        LOCATION = request.POST['choice']
+        self.params = index(self, request, LOCATION)
+        
+        return render(request, "clothes/index.html", context=self.params)
+    
+    
 #ログインボタンを押した
 def Login(request):
-    # POST
+    # Post処理
     if request.method == 'POST':
         # フォーム入力のユーザーID・パスワード取得
         ID = request.POST.get('userid')
@@ -94,86 +91,44 @@ def Login(request):
         # ユーザー認証失敗
         else:
             return HttpResponse("ユーザー名またはパスワードが間違っています")
-    # GET
+    # Get処理
     else:
         return render(request, 'clothes/login.html')
 
-@login_required
-def logindex(request):
-    
-    prefecture = ""
-    max_celsius = ""
-    min_celsius = ""
-    coordinate = ""
-    temp = 0
-    list_imageid = []
-    url_ = []
-    
-    params = {
-        'region': prefecture,
-        'max': max_celsius,
-        'min': min_celsius,
-        'coodinate': coordinate,
-        'form': PrefectureForm,
-        'url_1': None,
-        'url_2': None,
-        'url_3': None,
-        'url_4': None,
-    }
-    
-    params['region'] = PrefectureForm(request.POST)
-    
-    
-    if (request.method == 'POST'):
-        if('choice' in request.POST):
-            location_num = request.POST['choice']
+class ImageList(ListView):
+    model = UploadImage
+    template_name = 'clothes/image_list.html'
 
-            geo_request_url = f"https://weather.tsukumijima.net/api/forecast/city/{location_num}"
-            data = requests.get(geo_request_url).json()
-            max_temp = int(data['forecasts'][1]['temperature']['max']['celsius'])
-            min_temp = int(data['forecasts'][1]['temperature']['min']['celsius'])
-            params['max'] = str(max_temp) + "℃"
-            params['min'] = str(min_temp) + "℃"
+# ホーム画面(ログインあり)
+@method_decorator(login_required, name='dispatch')
+class HomeView(TemplateView):
+    model = UploadImage
 
-            if max_temp >= 23 and min_temp > 20:
-                params['coordinate'] = '半袖など真夏の格好でいいでしょう'
-                temp = 0
-            elif max_temp >= 23 and min_temp <= 20:
-                params['coordinate'] = '半袖とプラスで何かはおうものがあるといいでしょう'
-                temp = 1
-            elif 18 <= max_temp < 23 and 16 <= min_temp < 23:
-                params['coordinate'] = ('薄めカーディガンや長袖シャツを着ていくといいでしょう')
-                temp = 2
-            elif 18 <= max_temp < 23 and 16 > min_temp:
-                params['coordinate'] = ('厚めのカーディガンやスウェットを着ると過ごしやすいでしょう')
-                temp = 3
-            elif 10 <= max_temp < 18 and 8 <= min_temp < 18:
-                params['coordinate'] = ('セーターや春物のコートを着ていくといいでしょう')
-                temp = 4
-            elif 10 <= max_temp < 18 and 8 > min_temp:
-                params['coordinate'] = 'トレンチコートなど着ていくといいでしょう'
-                temp = 5
-            elif max_temp < 10 and 2 <= min_temp < 10:
-                params['coordinate'] = '冬物コートやボアブルゾンを着ていくようにしましょう'
-                temp = 6
-            elif max_temp < 10 and 2 > min_temp:
-                params['coordinate'] = 'ダウンコートや手袋やマフラーが必須ですね'
-                temp = 7
-            
-            # temprature=tempの画像のidをリストlist_imageidに入れて、指定数分のidをrandom_imageidに入れる
-            temp_image = UploadImage.objects.values('image_id').filter(temprature=temp)
-            for i in range(len(temp_image)):
-                list_imageid.append(temp_image[i]['image_id'])
-            ramdom_imageid = random.sample(list_imageid, 2)
-            
-            for j in ramdom_imageid:
-                upload_image = get_object_or_404(UploadImage, id=j)
-                url_.append(upload_image.image.url)
-            
-            params['url_1'] = url_[0]
-            params['url_2'] = url_[1]
-    
-    return render(request, 'clothes/logindex.html' ,params)
+    def __init__(self):
+        self.params = {
+            "PrefectureList": PrefectureForm,
+            "max_temp": 0,
+            "min_temp": 0,
+            "climate": None,
+            "coordinate": None,
+            "images": None,
+        }
+
+    # Get処理
+    def get(self, request):
+        # 初期値は東京
+        INITIAL_LOCATION = 'lat=35.4122&lon=139.4130'
+        self.params = home(self, request, INITIAL_LOCATION)
+        
+        return render(request, "clothes/home.html", context=self.params)
+
+    # Post処理
+    def post(self, request):
+        # プルダウンリストから位置取得
+        LOCATION = request.POST['choice']
+        self.params = home(self, request, LOCATION)
+        
+        return render(request, "clothes/home.html", context=self.params)
 
 #ログアウト
 @login_required
@@ -184,7 +139,6 @@ def Logout(request):
 
 #新規登録
 class  AccountRegistration(TemplateView):
-
     def __init__(self):
         self.params = {
         "AccountCreate":False,
@@ -219,7 +173,6 @@ class  AccountRegistration(TemplateView):
             # AccountForm & AddAccountForm 1vs1 紐付け
             add_account.user = account
 
-
             # モデル保存
             add_account.save()
 
@@ -234,54 +187,172 @@ class  AccountRegistration(TemplateView):
 
 # 画像アップロード
 @login_required
-def post_image(request):
-    prefecture = ""
+def upload(request):
     
     params = {
-        'region': prefecture,
+        'region': PrefectureForm(),
         'upload_form': UploadForm(),
         'temprature': None,
-        'id': None,
     }
-    
-    params['region'] = PrefectureForm(request.POST)
 
+    # Postなら県庁所在地からAPIで気温取得
     if (request.method == 'POST'):
-        if('choice' in request.POST):
-            location_num = request.POST['choice']
-
-            geo_request_url = f"https://weather.tsukumijima.net/api/forecast/city/{location_num}"
-            data = requests.get(geo_request_url).json()
-            max_temp = int(data['forecasts'][1]['temperature']['max']['celsius'])
-            min_temp = int(data['forecasts'][1]['temperature']['min']['celsius'])
-
-            if max_temp >= 23 and min_temp > 20:
-                temp = 0
-            elif max_temp >= 23 and min_temp <= 20:
-                temp = 1
-            elif 18 <= max_temp < 23 and 16 <= min_temp < 23:
-                temp = 2
-            elif 18 <= max_temp < 23 and 16 > min_temp:
-                temp = 3
-            elif 10 <= max_temp < 18 and 8 <= min_temp < 18:
-                temp = 4
-            elif 10 <= max_temp < 18 and 8 > min_temp:
-                temp = 5
-            elif max_temp < 10 and 2 <= min_temp < 10:
-                temp = 6
-            elif max_temp < 10 and 2 > min_temp:
-                temp = 7
+        # APIキー取得
+        json_open = open('clothes/openweather_apikey.json', 'r')
+        json_load = json.load(json_open)
+        API_KEY = json_load['API_KEY']
+        LOCATION = request.POST['choice']
+        
+        # OpenWeatherMapAPIから当日の天気予報取得
+        geo_request_url = f"https://api.openweathermap.org/data/2.5/onecall?{LOCATION}&exclude=minutely,current&units=metric&lang=ja&&appid={API_KEY}"
+        temperature_data = requests.get(geo_request_url).json()
+        max_temp = int(temperature_data['daily'][0]['temp']['max'])
+        min_temp = int(temperature_data['daily'][0]['temp']['min'])
+        coordinate, temp_num = coordinate_message(max_temp, min_temp)
+        params['region'] = PrefectureForm(request.POST)
                 
+        # 投稿フォーム
         form = UploadForm(request.POST, request.FILES)
         
+        # 気温と画像をセットでアップロード
         if form.is_valid():
-            upload_image = form.save()
-            image = UploadImage.objects.get(id=upload_image.id)
-            image.temprature = temp
-            image.image_id = upload_image.id
-            image.save()
-            
+            upload_image = form.save(commit=False)
+            upload_image.temperature = temp_num
+            upload_image.user = request.user
+            upload_image.save()
             params['id'] = upload_image.id
             
+    return render(request, "clothes/upload.html", params)
 
-    return render(request, "clothes/post_image.html", params)
+# マイページ
+@method_decorator(login_required, name='dispatch')
+class MyPageView(TemplateView):
+    template_name = 'clothes/mypage.html'
+    model = UploadImage
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        
+        # いいねされてるかの有無によって表示変更
+        d = {}
+        for post in UploadImage.objects.all():
+            # いいね数のカウント
+            like_for_post_count = post.likeforpost_set.count()
+            if post.likeforpost_set.filter(user=self.request.user).exists():
+                is_user_liked_for_post = True
+            else:
+                is_user_liked_for_post = False
+            d[post.pk] = {'count': like_for_post_count, 'is_user_liked_for_post': is_user_liked_for_post}
+        
+        # ログイン中のユーザー名
+        context['username'] = self.request.user.username
+        context['images'] = UploadImage.objects.filter(user=self.request.user)
+        # 辞書として送信
+        context[f'post_like_data'] = d
+        
+        return context
+
+# max_tempとmin_tempから服装提案メッセージ
+def coordinate_message(max_temp, min_temp):
+    if max_temp >= 23 and min_temp > 20:
+        coordinate = '半袖など真夏の格好でいいでしょう'
+        temp_num = 7
+    elif max_temp >= 23 and min_temp <= 20:
+        coordinate = '半袖とプラスで何かはおうものがあるといいでしょう'
+        temp_num = 6
+    elif 18 <= max_temp < 23 and 16 <= min_temp < 23:
+        coordinate = ('薄めカーディガンや長袖シャツを着ていくといいでしょう')
+        temp_num = 5
+    elif 18 <= max_temp < 23 and 16 > min_temp:
+        coordinate = ('厚めのカーディガンやスウェットを着ていくといいでしょう')
+        temp_num = 4
+    elif 10 <= max_temp < 18 and 8 <= min_temp < 18:
+        coordinate = ('セーターや春物のコートを着ていくといいでしょう')
+        temp_num = 3
+    elif 10 <= max_temp < 18 and 8 > min_temp:
+        coordinate = 'トレンチコートなど着ていくといいでしょう'
+        temp_num = 2
+    elif max_temp < 10 and 2 <= min_temp < 10:
+        coordinate = '冬物コートやボアブルゾンを着ていくようにしましょう'
+        temp_num = 1
+    elif max_temp < 10 and 2 > min_temp:
+        coordinate = 'ダウンコートや手袋、マフラーが必須です'
+        temp_num = 0
+    
+    return coordinate, temp_num
+   
+
+# index.html用
+def index(self, request, location):
+    # APIキー取得
+    json_open = open('clothes/openweather_apikey.json', 'r')
+    json_load = json.load(json_open)
+    API_KEY = json_load['API_KEY']
+    LOCATION = location
+    
+    # OpenWeatherMapAPIから当日の天気予報取得
+    geo_request_url = f"https://api.openweathermap.org/data/2.5/onecall?{LOCATION}&exclude=minutely,current&units=metric&lang=ja&&appid={API_KEY}"
+    temperature_data = requests.get(geo_request_url).json()
+    max_temp = int(temperature_data['daily'][0]['temp']['max'])
+    min_temp = int(temperature_data['daily'][0]['temp']['min'])
+    climate = str(temperature_data['hourly'][5]['weather'][0]['main'])
+    coordinate, temp_num = coordinate_message(max_temp, min_temp)
+    
+    # パラメータに値を入れる
+    context = {}
+    context['max_temp'] = max_temp
+    context['min_temp'] = min_temp
+    context['climate'] = climate
+    context['coordinate'] = coordinate
+    context['images'] = UploadImage.objects.filter(temperature=temp_num).order_by('-sum_like')
+    
+    # Post用とGet用
+    if (request.method == 'POST'):
+        context["PrefectureList"] = PrefectureForm(request.POST)
+    else:
+        context["PrefectureList"] = PrefectureForm()
+    
+    return context
+
+
+# home.html用
+def home(self, request, location):
+        # APIキー取得
+        json_open = open('clothes/openweather_apikey.json', 'r')
+        json_load = json.load(json_open)
+        API_KEY = json_load['API_KEY']
+        LOCATION = location
+        
+        # OpenWeatherMapAPIから当日の天気予報取得
+        geo_request_url = f"https://api.openweathermap.org/data/2.5/onecall?{LOCATION}&exclude=minutely,current&units=metric&lang=ja&&appid={API_KEY}"
+        temperature_data = requests.get(geo_request_url).json()
+        max_temp = int(temperature_data['daily'][0]['temp']['max'])
+        min_temp = int(temperature_data['daily'][0]['temp']['min'])
+        climate = str(temperature_data['hourly'][5]['weather'][0]['main'])
+        coordinate, temp_num = coordinate_message(max_temp, min_temp)
+        
+        # いいねされてるかの有無によって表示変更
+        d = {}
+        for post in UploadImage.objects.all():
+            if post.likeforpost_set.filter(user=self.request.user).exists():
+                is_user_liked_for_post = True
+            else:
+                is_user_liked_for_post = False
+            d[post.pk] = {'is_user_liked_for_post': is_user_liked_for_post}
+        
+        # パラメータに値を入れる
+        context = {}
+        context[f'post_like_data'] = d
+        context['max_temp'] = max_temp
+        context['min_temp'] = min_temp
+        context['climate'] = climate
+        context['coordinate'] = coordinate
+        context['images'] = UploadImage.objects.filter(temperature=temp_num).order_by('-sum_like')
+        
+        # Post用とGet用
+        if (request.method == 'POST'):
+            context["PrefectureList"] = PrefectureForm(request.POST)
+        else:
+            context["PrefectureList"] = PrefectureForm()
+        
+        return context

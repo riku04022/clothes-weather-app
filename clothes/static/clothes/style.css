@@ -1,0 +1,324 @@
+.container {
+    text-align: center;
+    position: relative;
+    top: 20px;
+    height: 100vh;
+    background-color: white;
+}
+
+.container-mypage {
+    text-align: center;
+    position: relative;
+    top: 20px;
+    height: 100vh;
+    background-color: white;
+}
+
+.title {
+    position: absolute;
+    top: 2%;
+    left: 2%;
+}
+
+.location-choice {
+    position: absolute;
+    padding-left: 2%;
+    padding-right: 2%;
+    margin-top: auto;
+    margin-bottom: auto;
+    top: 2%;
+    right: 2%;
+    height: 2.6rem;
+    border-radius: 10px;
+}
+
+.weather {
+    position: relative;
+    top: 80px;
+    width: 50%;
+    height: 13rem;
+}
+
+#sunny-icon {
+    color: #FFA103;
+    font-size: 125px;
+    position: absolute;
+    padding-right: 2%;
+    right: 2%;
+    top: 9%;
+    width: 147px;
+    text-align: center;
+}
+
+#rainy-icon {
+    color: #1E90FF;
+    font-size: 125px;
+    position: absolute;
+    right: 2%;
+    top: 9%;
+    width: 147px;
+    text-align: center;
+}
+
+#snow-icon {
+    color: #CFD7DF;
+    font-size: 125px;
+    position: absolute;
+    padding-right: 2%;
+    right: 2%;
+    top: 9%;
+    width: 147px;
+    text-align: center;
+}
+
+#bolt-icon {
+    color: #F4E200;
+    font-size: 125px;
+    position: absolute;
+    right: 2%;
+    top: 9%;
+    width: 147px;
+    text-align: center;
+}
+
+#cloud-icon {
+    color: #9C9C9C;
+    font-size: 125px;
+    position: absolute;
+    right: 4%;
+    top: 11%;
+    width: 147px;
+    text-align: center;
+    background-color: white;
+}
+
+.weather-body {
+    font-size: 25px;
+    position: absolute;
+    right: 2%;
+    top: 73%;
+    height: 3rem;
+    width: 147px;
+    padding-right: 2%;
+    text-align: center;
+}
+
+.temperature {
+    position: absolute;
+    top: 21%;
+    left: 104%;
+    font-size: 25px;
+    width: 100%;
+    text-align: left;
+}
+
+.coordinate {
+    background-color: #F0F0F0;
+    border-radius: 10px;
+    position: absolute;
+    margin: auto;
+    transform: translate(-50%, -50%);
+    top: 45%;
+    left: 50%;
+    width: fit-content;
+    padding-left: 1%;
+    padding-right: 1%;
+    padding-bottom: 2%;
+}
+
+.coordinate-heading {
+    position: absolute;
+    top: 4%;
+    left: 3%;
+    font-size: 14px;
+}
+
+.coordinate-body {
+    font-size: 21px;
+}
+
+.my-post {
+    position: relative;
+    top: 70px;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    margin: auto;
+    height: 16rem;
+    width: 80%;
+}
+
+.my-post-heading {
+    position: absolute;
+    top: 0%;
+    left: 0%;
+}
+
+.my-image {
+    position: absolute;
+    top: 10%;
+    width: 100%;
+}
+
+.other-user {
+    position: absolute;
+    top: 40%;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    margin: auto;
+    height: 16rem;
+    width: 80%;
+}
+
+.other-user-heading {
+    position: absolute;
+    top: 0%;
+    left: 0%;
+}
+
+.card-body i {
+    position: absolute;
+    font-size: 25px;
+}
+
+.other-image {
+    position: absolute;
+    top: 10%;
+    width: 100%;
+}
+
+.no-image {
+    font-size: 25px;
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    margin: auto;
+    width: 100%;
+}
+
+.login-body {
+    -ms-flex-align: center;
+    align-items: center;
+    padding-right: 40px;
+    padding-left: 40px;
+    position: relative;
+    top: 150px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    margin: auto;
+    width: 40%;
+    height: auto;
+    text-align: center;
+}
+
+.form-signin .form-control {
+    position: relative;
+    box-sizing: border-box;
+    height: auto;
+    padding: 10px;
+    font-size: 16px;
+}
+
+.form-signin .form-control:focus {
+    z-index: 2;
+}
+
+.form-signin input[type="email"] {
+    margin-bottom: -1px;
+    border-bottom-right-radius: 0;
+    border-bottom-left-radius: 0;
+}
+
+.form-signin input[type="password"] {
+    margin-bottom: 10px;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+}
+
+.account-exist {
+    position: absolute;
+    top: 120%;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    margin: auto;
+    width: 100%;
+}
+
+.reg {
+    position: relative;
+    top: 50px;
+    width: 70%;
+    height: 20rem;
+    margin: auto;
+    background-color: white;
+}
+
+.new-reg {
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    margin: auto;
+    width: 100%;
+    text-align: center;
+}
+
+.reg_form {
+    position: absolute;
+    top: 30%;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    width: 90%;
+    margin: auto;
+    padding-left: 5%;
+    text-align: center;
+}
+
+.post_image {
+    position: relative;
+    top: 50px;
+    width: 50%;
+    height: 20rem;
+    margin: auto;
+    background-color: white;
+    text-align: left;
+}
+
+.new-post {
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    margin: auto;
+    width: 100%;
+    text-align: center;
+}
+
+.upload_form {
+    position: absolute;
+    top: 7%;
+    left: 30%;
+    right: 0;
+    bottom: 0;
+    width: 90%;
+    margin: auto;
+    padding-left: 5%;
+}
+
+.posted {
+    position: relative;
+    top: 100px;
+    text-align: center;
+}
+
+.logouted {
+    position: relative;
+    top: 100px;
+    text-align: center;
+}

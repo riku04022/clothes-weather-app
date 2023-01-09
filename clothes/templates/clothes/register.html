@@ -1,24 +1,29 @@
-<!DOCTYPE html>
+<!--  clothes/templates/clothes/register.html -->
 {% extends 'clothes/base.html' %}
 {% block content %}
-
-<h1>新規登録</h1>
-
+<header>
+  <nav class="navbar navbar-expand-md navbar-light bg-light sticky-top">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="{% url 'clothes:index' %}">服装決定アプリ</a>  
+    </div>
+  </nav>
+</header>
 {% if AccountCreate %}
   <h1>登録が完了しました</h1>
-    <a href="{% url 'clothes:Login' %}">ログイン画面に戻る</a>
+  <a href="{% url 'clothes:Login' %}">ログイン画面に戻る</a>
 {% else %}
   <div class="reg">
-  <table class="reg_form">
-  <form enctype="multipart/form-data" method="post">
-  {% csrf_token %}
-  {{ account_form.as_table }}
-  {{ add_account_form.as_table }}
-  <tr><td></td><td>
-  <input class="btn" type="submit" name="" value="登録">
-  </td></tr>
-  </form>
-  </table>
+    <h2 class="new-reg">新規登録</h2>
+    <table class="reg_form">
+      <form enctype="multipart/form-data" method="post">
+        {% csrf_token %}
+        {{ account_form.as_table }}
+        {{ add_account_form.as_table }}
+        <tr><td></td><td>
+        <input class="btn" type="submit" name="" value="登録">
+        </td></tr>
+      </form>
+    </table>
   </div>
 {% endif %}
 {% endblock %}

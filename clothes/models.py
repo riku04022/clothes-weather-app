@@ -1,13 +1,13 @@
+from datetime import datetime
 from django.db import models
 from django.contrib.auth.models import User
 
 # ユーザーアカウントのモデルクラス
 class Account(models.Model):
 
-    # ユーザー認証のインスタンス(1vs1関係)
+    # ユーザー認証のインスタンス
     user = models.OneToOneField(User, on_delete=models.CASCADE)
 
-    # 追加フィールド
     gender_list = [
         (0, "男性"),
         (1, "女性")
@@ -27,7 +27,14 @@ class Account(models.Model):
     def __str__(self):
         return self.user.username
 
+# 画像アップロードのモデルクラス
 class UploadImage(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     image = models.ImageField(upload_to='img/')
-    temprature = models.IntegerField(default=0)
-    image_id = models.IntegerField(default=0)
+    temperature = models.IntegerField(default=0)
+    sum_like = models.IntegerField(default=0)
+
+# 画像に対するいいね
+class LikeForPost(models.Model):
+    target = models.ForeignKey(UploadImage, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
