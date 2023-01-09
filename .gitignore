@@ -6,11 +6,12 @@ env
 venv
 myvenv
 db.sqlite3
-/media/
-media/img
+media/
+media
 .DS_Store
 .vscode
 .venv/
+.venv
 Pipfile
 Pipfile.lock
 Procfile
