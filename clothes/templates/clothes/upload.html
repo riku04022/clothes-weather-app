@@ -1,0 +1,31 @@
+<!--  clothes/templates/clothes/upload.html -->
+{% extends 'clothes/base.html' %}
+{% block content %}
+<header>
+    <nav class="navbar navbar-expand-md navbar-light bg-light fluid-top">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="{% url 'clothes:home' %}">服装決定アプリ</a>
+      </div>
+    </nav>
+</header>
+{% if id is not None %}
+    <div class="posted">
+        <h1>投稿が完了しました</h1>
+        <a href="{% url 'clothes:home' %}">ホームに戻る</a>
+    </div>
+{% else %}
+    <div class="post_image">
+      <h2 class="new-post">本日の服装を投稿する</h2>
+      <table class="upload_form">
+        <form action="{% url 'clothes:post_image' %}" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ region }}
+            {{ upload_form.as_table }}
+            <tr><td></td><td>
+            <input class="btn" type="submit" value="投稿する">
+            </td></tr>
+        </form>
+      </table>
+    </div>
+{% endif %}
+{% endblock %}

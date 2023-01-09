@@ -1,38 +1,107 @@
-<!DOCTYPE html>
-<html>
-
+<!--  clothes/templates/clothes/mypage.html -->
 {% extends 'clothes/base.html' %}
+{% load clothes %}
 {% block content %}
-
-<body>
-  <header> 
-    <a class="posting" href="">投稿</a>
-    <a class="mypage" href="">マイページ</a>
-    <a class="loginout" href="">ログアウト</a>
-  </header>
-
-  <div class ="body1">
-  <p>今日の気温からあなたに最適な服装を提案します。</p>  
-  <p>都市を選択してください。</p> 
+<header>
+  <nav class="navbar navbar-expand-md navbar-light bg-light sticky-top">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="{% url 'clothes:home' %}">服装決定アプリ</a>
+      <div class="collapse navbar-collapse">
+        <ul class="navbar-nav">
+          <li class="nav-item active">
+            <a class="nav-link" href="{% url 'clothes:upload' %}">投稿</a>
+          </li>
+          <li class="nav-item active">
+            <a class="nav-link" href="{% url 'clothes:Logout' %}">ログアウト</a>
+          </li>
+        </ul>
+    </div>
+  </nav>
+</header>
+<div class="container-mypage">
+  <div class="title">
+    <h4>{{ username }}のマイページ</h4>
   </div>
-
-  <div class ="button">
-    <form method="post">
-        {% csrf_token %}
-        {{ region }}
-        <input type = "submit" value="スタート">
-    </form>
+  <div class="my-post">
+    <div class="my-post-heading">
+      <p><b>あなたの投稿</b></p>
+    </div>
+    <div class="my-image">
+      <div class="row row-cols-2 row-cols-lg-4 row-cols-md-3 g-4">
+        {% for post in images %}
+          {% if forloop.counter <= 4 %}
+            <div class="col">
+              <div class="card">
+                <img src='{{ MEDIA_URL }}{{ post.image }}'>
+                <div class="card-footer">
+                  {% with dic=post_like_data|get_item:post.pk %}
+                  {% if dic.is_user_liked_for_post %}
+                    <button type="button" class="ajax-like-for-post" data-pk="{{ post.pk }}" style="border:none;background:none">
+                      <!-- すでにいいねしている時はfasクラス -->
+                      <i class="fas fa-heart text-danger" id="like-for-post-icon-{{ post.pk }}"></i>
+                    </button>
+                    {% else %}
+                    <button type="button" class="ajax-like-for-post" data-pk="{{ post.pk }}" style="border:none;background:none">
+                      <!-- いいねしていないときはfarクラス -->
+                      <i class="far fa-heart text-danger" id="like-for-post-icon-{{ post.pk }}"></i>
+                    </button>
+                  {% endif %}
+                  <!-- イイねの数 -->
+                  <span id="like-for-post-count-{{ post.pk }}">{{ dic.count }}</span>
+                  <span>件のいいね</span>
+                  {% endwith %}
+                </div>
+              </div>
+            </div>
+          {% endif %}
+        {% endfor %}
+        <!-- データベースに該当する画像が存在しない場合-->
+        {% if images|length == 0 %}
+          <div class="no-image">
+            <p><br><br>まだ投稿がありません</p>
+          </div>
+        {% endif %}
+      </div>
+    </div>
   </div>
-
-
-  <div class ="body2">
-    <p>最高気温： {{max}}</p>  
-    <p>最低気温： {{min}}</p>  
-    <p>あなたの今日の服は： {{coodinate}} </p>  
-  </div>
-
-</body>
-
+</div>
 {% endblock %}
 
-</html>
+{% block extrajs %}
+<script type="text/javascript">
+  /* 投稿に対するイイね */
+  const likePostButtons = document.getElementsByClassName('ajax-like-for-post');
+  for (const button of likePostButtons) {
+    button.addEventListener('click', e => {
+      const pk = button.dataset.pk
+      e.preventDefault();
+      const url = '{% url "clothes:like_for_post" %}';
+      fetch(url, {
+        method: 'POST',
+        body: `post_pk=${pk}`,
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8',
+          'X-CSRFToken': '{{ csrf_token }}',
+        },
+      }).then(response => {
+        return response.json();
+      }).then(response => {
+        const counter = document.getElementById(`like-for-post-count-${pk}`)
+        const icon = document.getElementById(`like-for-post-icon-${pk}`)
+        counter.textContent = response.like_for_post_count
+        if (response.method == 'create') {
+          icon.classList.remove('far')
+          icon.classList.add('fas')
+          icon.id = `like-for-post-icon-${pk}`
+        } else {
+          icon.classList.remove('fas')
+          icon.classList.add('far')
+          icon.id = `like-for-post-icon-${pk}`
+        }
+      }).catch(error => {
+        console.log(error);
+      });
+    });
+  }
+</script>
+{% endblock %}

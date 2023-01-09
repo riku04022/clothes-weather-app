@@ -1,35 +1,101 @@
-<!DOCTYPE html>
-<html>
-
+<!--  clothes/templates/clothes/index.html -->
 {% extends 'clothes/base.html' %}
+{% load clothes %}
 {% block content %}
-
-<body>
-  <header> 
-    <a href="{% url 'clothes:Login' %}" class="login">ログイン</a>
-  </header>
-
-  <div class ="body1">
-  <p>今日の気温からあなたに最適な服装を提案します。</p>  
-  <p>都市を選択してください。</p> 
+<header>
+  <nav class="navbar navbar-expand-md navbar-light bg-light fluid-top">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="{% url 'clothes:index' %}">服装決定アプリ</a>
+      <div class="collapse navbar-collapse">
+        <ul class="navbar-nav">
+          <li class="nav-item active">
+            <a class="nav-link" href="{% url 'clothes:Login' %}">ログイン</a>
+          </li>
+        </ul>
+    </div>
+  </nav>
+</header>
+<div class="container">
+  <div class="title">
+    <h4>本日の天気</h4>
   </div>
-
-  <div class ="button">
-    <form method="post">
-        {% csrf_token %}
-        {{ region }}
-        <input type = "submit" value="スタート">
+  <!-- 地点を選択 -->
+  <div class="location-choice" style="border:solid 1px #aaa" >
+    <form method="post" class="location-name" style="margin-top:5px;;">
+      {% csrf_token %}
+      {{ PrefectureList }}
+      <input type = "submit" value="検索">
     </form>
   </div>
-
-  <div class ="body2">
-    <p>最高気温： {{max}}</p>  
-    <p>最低気温： {{min}}</p>  
-    <p>あなたの今日の服は： {{coodinate}} </p>  
+  <div class="weather">
+    {% if climate == "Clear" %}
+      <i class="fas fa-solid fa-sun" id="sunny-icon"></i>
+      <div class="weather-body">
+        <p>晴れ</p>
+      </div>  
+    {% elif climate == "Rain" or climate == "Drizzle"%}
+      <i class="fas fa-solid fa-umbrella" id="rainy-icon"></i>
+      <div class="weather-body">
+        <p>雨</p>
+      </div>
+    {% elif climate == "Snow" %}
+      <i class="fas fa-solid fa-snowflake" id="snow-icon"></i>
+      <div class="weather-body">
+        <p>雪</p>
+      </div>
+    {% elif climate == "Thunderstorm" %}
+      <i class="fas fa-solid fa-bolt" id="bolt-icon"></i>
+      <div class="weather-body">
+        <p>雷雨</p>
+      </div>
+    {% else %}
+      <i class="fas fa-solid fa-cloud" id="cloud-icon"></i>
+      <div class="weather-body">
+        <p>くもり</p>
+      </div>
+    {% endif %}
+    <div class="temperature">
+      <span class="max-temp">最高気温 <font color="red">{{ max_temp }}℃</font></span>
+      <br><br>
+      <span class="min-temp">最低気温 <font color="blue">{{ min_temp }}℃</font></span>
+    </div>
   </div>
-
-</body>
-
+  <div class="coordinate">
+    <div class="coordinate-heading">
+      <span>今日のコーディネートは... <br></span>
+    </div>
+    <div class="coordinate-body">
+      <span><br>{{ coordinate }}</span>
+    </div>
+  </div>
+  <div class="other-user">
+    <div class="other-user-heading">
+      <p><b>他の人はこんな服を着ています</b></p>
+    </div>
+    <div class="other-image">
+      <div class="row row-cols-2 row-cols-lg-4 row-cols-md-3 g-4">
+        {% for post in images %}
+          {% if forloop.counter <= 4 %}
+            <div class="col">
+              <div class="card">
+                <img src='{{ MEDIA_URL }}{{ post.image }}'>
+                <ul class="list-group list-group-flush">
+                  <button type="button" onclick="location.href='{% url 'clothes:Login' %}'" style="border:none;background:none">
+                    <i class="far fa-heart text-danger" id="like-for-post-icon"></i>
+                  </button>
+                </ul>
+              </div>
+            </div>
+          {% endif %}
+        {% endfor %}
+        <!-- データベースに該当する画像が存在しない場合-->
+        {% if images|length == 0 %}
+          <div class="no-image">
+            <p><br><br>まだ投稿がありません</p>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
 {% endblock %}
-
-</html>

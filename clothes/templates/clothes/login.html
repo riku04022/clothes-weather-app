@@ -1,24 +1,26 @@
-<!DOCTYPE html>
+<!--  clothes/templates/clothes/login.html -->
 {% extends 'clothes/base.html' %}
 {% block content %}
+<header>
+  <nav class="navbar navbar-expand-md navbar-light bg-light sticky-top">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="{% url 'clothes:index' %}">服装決定アプリ</a>
+  </nav>
+</header>
 
-<div class="reg">
-  <form method="post" action="{% url 'clothes:Login' %}">
-    {% csrf_token %}
-
-    <table class="reg_form">
-    <tr>
-    <td><label for="userid">ユーザー名:</label></td>
-    <td><input type="text" name="userid"></td>
-    <td><label for="password">パスワード：</label></td>
-    <td><input type="password" name="password"></td>
-    </tr>
-    </table>
-    <input type="submit" class="btn" value="ログイン">
- </form>
+<div class="login-body">
+   <div class="form-signin">
+      <form method="post" action="{% url 'clothes:Login' %}">
+         {% csrf_token %}
+         <label for="userid" class="sr-only">ユーザー名</label>
+         <input type="text" name="userid" id="inputUserName" class="form-control" placeholder="ユーザー名" required autofocus>
+         <label for="inputPassword" class="sr-only">パスワード</label>
+         <input type="password" name="password" id="inputPassword" class="form-control" placeholder="パスワード" required>
+         <input type="submit" class="btn btn-lg btn-primary btn-block" value="ログイン">
+      </form>
+      <div class="account-exist">アカウントをお持ちですか？：
+         <a href="{% url 'clothes:register' %}">アカウントを作成</a>
+      </div>
+   </div>
 </div>
-   <p class="message">アカウントをお持ちですか？：
-   <a href="{% url 'clothes:register' %}">アカウントを作成</a>
-   </p>
 {% endblock %}
-
