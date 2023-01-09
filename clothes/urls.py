@@ -20,6 +20,6 @@ urlpatterns = [
     path('mypage', views.MyPageView.as_view(), name='mypage'),
     # ユーザー認証用
     path('login', include('django.contrib.auth.urls')),
-    # いいね
+    # いいね用
     path('like_for_post', views.like_for_post, name='like_for_post'),
 ]

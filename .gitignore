@@ -1,7 +1,12 @@
 *.pyc
 *~
 __pycache__
+env
+venv
 myvenv
 db.sqlite3
 /static
 .DS_Store
+.vscode
+
+openweather_apikey-a.json
