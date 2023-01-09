@@ -8,6 +8,10 @@ myvenv
 db.sqlite3
 media/
 media
+img/
+/img/
+media/img
+media/img/
 .DS_Store
 .vscode
 .venv/
@@ -15,4 +19,3 @@ media
 Pipfile
 Pipfile.lock
 Procfile
-openweather_apikey-a.json
