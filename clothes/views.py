@@ -1,8 +1,8 @@
-import requests, random, json
+import requests, json
 from django.http import HttpResponseRedirect, HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, render
 from django.views import generic
-from django.views.generic import ListView, TemplateView, DetailView
+from django.views.generic import ListView, TemplateView
 from .forms import PrefectureForm, UploadForm, AccountForm, AddAccountForm
 from .models import UploadImage, LikeForPost
 from django.contrib.auth import authenticate, login, logout
