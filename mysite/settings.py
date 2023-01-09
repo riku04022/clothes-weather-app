@@ -1,21 +1,16 @@
 from pathlib import Path
 import os
 
-if os.getenv('GAE_APPLICATION', None):
-    # 本番環境
-    DEBUG = False
-    ALLOWED_HOSTS = ['weather-clothes-app.an.r.appspot.com']
-else:
-    # 開発環境
-    DEBUG = True
-    ALLOWED_HOSTS = ['*']
+
+DEBUG = True
+ALLOWED_HOSTS = ['*']
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 TEMPLATE_DIR = os.path.join(BASE_DIR,'templates')
 
 # Secret Key
-SECRET_KEY = 'django-insecure-*8s1twu^)@hnhur+j8&!qo6u1thht12$=69a_1o5jz1d&3kitt'
+SECRET_KEY = '*'
 
 # Application definition
 INSTALLED_APPS = [
@@ -75,60 +70,7 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
-"""
-if os.getenv('GAE_APPLICATION', None):
-       # GAE本番環境
-   DATABASES = {
-       'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'HOST': '/cloudsql/weather-clothes-app:asia-northeast1:cloud-mysql',
-        'USER': 'riku04022',
-        'PASSWORD': 'Riku0402',
-        'NAME': 'USER',
-    }
-   }
-else:
-   # 開発環境
-   # 事前に./cloud_sql_proxyを実行してプロキシ経由でアクセスできるようにする必要がある。
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.mysql',
-            'HOST': '127.0.0.1',
-            'PORT': '3306',
-            'USER': 'root',
-            'PASSWORD': 'root0123',
-            'NAME': 'USER',
-        }
-}
 
-
-
-# パスワード有効性
-AUTH_PASSWORD_VALIDATORS = [
-    {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-        'OPTIONS':{"min_length":6},
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
-    },
-]
-
-# パスワードのハッシュ化
-PASSWORD_HASHERS = [
-    "django.contrib.auth.hashers.Argon2PasswordHasher",
-    "django.contrib.auth.hashers.BCryptSHA256PasswordHasher",
-    "django.contrib.auth.hashers.BCryptPasswordHasher",
-    "django.contrib.auth.hashers.PBKDF2PasswordHasher",
-    "django.contrib.auth.hashers.PBKDF2SHA1PasswordHasher",
-]
-"""
 
 
 # Internationalization
