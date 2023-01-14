@@ -1,9 +1,38 @@
 from pathlib import Path
 import os
+import os 
 
+if os.getenv('GAE_APPLICATION', None):
+   # 本番環境
+   DEBUG = False
+   ALLOWED_HOSTS = ['clothes-weather-app-374216.an.r.appspot.com']
+else:
+   # 開発環境
+   DEBUG = True
+   ALLOWED_HOSTS = ['*']
 
-DEBUG = True
-ALLOWED_HOSTS = ['*']
+if os.getenv('GAE_APPLICATION', None):
+       # GAE本番環境
+   DATABASES = {
+       'default': {
+           'ENGINE': 'django.db.backends.mysql',
+           'HOST': '/cloudsql/clothes-weather-app-374216:asia-northeast1:clothes-weather-db-instance',
+           'USER': 'riku',
+           'PASSWORD': 'riku0123',
+           'NAME': 'clothes-weather-mysql',
+       }
+   }
+else:
+   # 開発環境
+   # 事前に./cloud_sql_proxyを実行してプロキシ経由でアクセスできるようにする必要がある。
+   DATABASES = {
+       'default': {
+           'ENGINE': 'django.db.backends.mysql',
+           'USER': 'root',
+           'PASSWORD': '',
+           'NAME': 'clothes_weather_mysql',
+       }
+   }
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -62,15 +91,6 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'mysite.wsgi.application'
-
-# データベース
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
-}
-
 
 
 # Internationalization

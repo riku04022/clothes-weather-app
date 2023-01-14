@@ -193,6 +193,7 @@ def upload(request):
         'region': PrefectureForm(),
         'upload_form': UploadForm(),
         'temprature': None,
+        'id': None,
     }
 
     # Postなら県庁所在地からAPIで気温取得
