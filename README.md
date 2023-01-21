@@ -17,6 +17,9 @@ https://clothes-weather-app-374216.an.r.appspot.com
 
 <img width="709" alt="スクリーンショット 2022-12-17 15 04 42" src="https://user-images.githubusercontent.com/111218880/208227998-c3a67cb7-96e6-42a2-b8f7-8d6b9c576c70.png">
 
+## デモ動画
+https://user-images.githubusercontent.com/111218880/213861916-7abac2ad-f981-40dc-af4d-28deef83744b.mp4
+
 ## 機能紹介1:  簡単に気温と最適な服装を知る事ができる
 - 現在地を選択すると天候・気温・適切な服装を提示します
 - 気温情報取得には、天気予報のAPIを使用
