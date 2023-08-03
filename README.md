@@ -3,7 +3,7 @@
 他の人がその日どんな服を着ているかを確認いただけます。
 
 ## URL
-https://clothes-weather-app-374216.an.r.appspot.com
+~~https://clothes-weather-app-374216.an.r.appspot.com~~
 
 ## 使用技術
 - Python
